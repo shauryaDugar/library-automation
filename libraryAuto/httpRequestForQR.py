@@ -16,14 +16,15 @@ args = vars(ap.parse_args())
 print("[INFO] starting video stream...")
 camera = cv2.VideoCapture(0)
 
-csv = open(args["output"], "w")
+logs = open(args["output"], "w")
 
 # Set the resolution of the camera
 camera.set(3, 640)
 camera.set(4, 480)
 
 # Initialize a list to keep track of the people who have entered the room and their entry times
-people_in_room = []
+people_in_room = {}
+last_exit = {}
 
 while True:
     # Capture a frame from the camera. Here ret returns True or False depending on whether 
@@ -44,10 +45,13 @@ while True:
         # Draw a box around the detected QR code
         (x, y, w, h) = code.rect
 
+        res = get_info(data)
         # Draw the decoded information on the screen
-        if get_info(data) is not None:
+        if res is not None:
+            name, email = res
+            text = data+" "+name+" "+email
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cv2.putText(frame, data, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         else:
             error="Invalid Barcode!"
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -56,8 +60,10 @@ while True:
 
         # If the person has not already entered the room, add them to the list and send an HTTP request to update the count
         if data not in people_in_room:
-            people_in_room.append(data)
+            if data in last_exit and (datetime.datetime.now() - last_exit[data]).seconds < 60:
+                continue
             time = datetime.datetime.now()
+            people_in_room[data] = time
             num_people = len(people_in_room)
             url = f"http://localhost:8000/update_count?count={num_people}"
             requests.get(url)
@@ -67,8 +73,21 @@ while True:
             # Print a confirmation message
             print(f"Person {data} entered the room at {time}. {num_people} people in the room.")
             
-            csv.write("{},{}\n".format(time, data))
-            csv.flush()
+            logs.write("{},{},Entry\n".format(data, time))
+            logs.flush()
+        else:
+            # if the person is in the room, consider an exit after 2 minutes
+            time = datetime.datetime.now()
+            if(time - people_in_room[data]).seconds > 120:
+                #find the row using the reg_no and add exit time to the row
+                last_exit[data] = time
+                logs.write("{},{},Exit\n".format(data, time))
+                logs.flush()
+                del people_in_room[data]
+                num_people = len(people_in_room)
+                url = f"http://localhost:8000/update_count?count={num_people}"
+                requests.get(url)
+                print(f"Person {data} exited the room at {time}. {num_people} people in the room.")
 
     # Display the frame on the screen
     cv2.imshow("QR Code Scanner", frame)

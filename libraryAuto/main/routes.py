@@ -19,7 +19,7 @@ def index():
 
 @main.route('/send_mail', methods=["GET"])
 def send_mail():
-    reg_no = request.args.get('reg_no', type=int)
+    reg_no = request.args.get('reg_no', type=str)
     time = request.args.get('time', type=str)
     result = get_info(reg_no)
     if result is None:
