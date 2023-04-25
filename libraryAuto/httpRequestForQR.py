@@ -7,7 +7,7 @@ from utils import get_info
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-o", "--output", type=str, default="barcodes.csv",
+ap.add_argument("-o", "--output", type=str, default="libraryAuto/Logs/barcodes.csv",
 	help="path to output CSV file containing barcodes")
 args = vars(ap.parse_args())
 
@@ -45,7 +45,7 @@ while True:
         (x, y, w, h) = code.rect
 
         # Draw the decoded information on the screen
-        if get_info(int(data)) is not None:
+        if get_info(data) is not None:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(frame, data, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         else:

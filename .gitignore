@@ -48,3 +48,7 @@ build/
 *.swp
 .DS_Store
 Thumbs.db
+
+# Data Files
+barcodes.csv
+data.csv
