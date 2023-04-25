@@ -1,0 +1,50 @@
+# Flask app files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyi
+*.egg-info/
+*.egg
+
+# Environment files
+.env
+.env.*
+
+# Development files
+*.log
+*.sqlite3
+instance/
+
+# Dependency directories
+raspenv/
+venv/
+env/
+env.bak/
+env/
+env3/
+env3.bak/
+.venv/
+.venv.bak/
+venv/
+venv.bak/
+pipenv/
+.venv/
+pipenv-*
+pipfile.lock
+
+# Compiled files
+*.pyc
+*.pyo
+*.so
+*.egg
+*.egg-info
+dist/
+build/
+*.pyd
+
+# Others
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
