@@ -9,8 +9,16 @@ def send_async_email(app, msg):
 
 def send_library_entry_mail(mail_id, name, reg_no, time):
     msg = Message('Library Entry Mail Notification',
-            sender='wordbloomjpr@gmail.com', recipients=[mail_id])
+            sender='librarymnnit@gmail.com', recipients=[mail_id])
     msg.body = f'Entry for {name} ({reg_no}) recorded into the library at {time}.'
+    from app import app 
+    thr = Thread(target=send_async_email, args=[app, msg])
+    thr.start()
+
+def send_library_exit_mail(mail_id, name, reg_no, time):
+    msg = Message('Library Exit Mail Notification',
+                  sender='librarymnnit@gmail.com', recipients=[mail_id])
+    msg.body = f'Exit for {name} ({reg_no}) recorded from the library at {time}.'
     from app import app 
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()
