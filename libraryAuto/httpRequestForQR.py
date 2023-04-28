@@ -68,8 +68,6 @@ while True:
             num_people = len(people_in_room)
             dburl = f"http://localhost:8000/add_record?reg_no={data}&name={name}&time={logtime}"
             requests.get(dburl)
-            url = f"http://localhost:8000/update_count?count={num_people}"
-            requests.get(url)
             #Send an email to user once entry into the library is detected
             mail_url = f"http://localhost:8000/send_entry_mail?reg_no={data}&time={logtime}"
             requests.get(mail_url)
@@ -90,8 +88,6 @@ while True:
                 num_people = len(people_in_room)
                 dburl = f"http://localhost:8000/update_exit_time?reg_no={data}&time={logtime}"
                 requests.get(dburl)
-                url = f"http://localhost:8000/update_count?count={num_people}"
-                requests.get(url)
                 mail_url = f"http://localhost:8000/send_exit_mail?reg_no={data}&time={logtime}"
                 requests.get(mail_url)
                 print(f"Person {data} exited the room at {logtime}. {num_people} people in the room.")

@@ -6,19 +6,12 @@ from libraryAuto.models import Record
 from datetime import datetime
 import csv
 
-count = 0
-
 main = Blueprint('main', __name__)
-
-@main.route('/update_count', methods=['GET'])
-def update_count():
-    global count
-    count = request.args.get('count', type=int)
-    return f"Count updated to {count}"
 
 @main.route('/')
 def index():
-    return f"<h1>{count} people in the room</h1>"
+    recs = Record.query.filter_by(exit_time=None).all()
+    return f"<h1>{recs.size()} people in the room</h1>"
 
 
 @main.route('/send_entry_mail', methods=["GET"])
@@ -76,7 +69,7 @@ def download_records():
     with open('test.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile, delimiter=',')
         csvwriter.writerow(['id', 'reg_no', 'name', 'entry_time', 'exit_time'])
-        for rec in Record.query.all():
+        for rec in Record.query.filter(Record.entry_time>datetime.combine(datetime.today(), datetime.min.time())).all():
             csvwriter.writerow([rec.id, rec.reg_no, rec.name, rec.entry_time, rec.exit_time])
 
     return send_file('../test.csv',
