@@ -1,4 +1,4 @@
-from flask import request, jsonify, Blueprint, send_file
+from flask import request, jsonify, Blueprint, send_file, render_template
 from libraryAuto.utils import get_info
 from libraryAuto.mailUtil import send_library_exit_mail, send_library_entry_mail   
 from libraryAuto import db
@@ -11,7 +11,7 @@ main = Blueprint('main', __name__)
 @main.route('/')
 def index():
     recs = Record.query.filter_by(exit_time=None).all()
-    return f"<h1>{recs.size()} people in the room</h1>"
+    return f"<h1>{len(recs)} people in the library</h1>"
 
 
 @main.route('/send_entry_mail', methods=["GET"])
@@ -76,3 +76,23 @@ def download_records():
                      mimetype='text/csv',
                      as_attachment=True,
                      download_name='logs.csv')
+
+@main.route('/display_records')
+def display_records():
+    start_time = datetime.fromisoformat(request.args.get('start_time'))
+    end_time = datetime.fromisoformat(request.args.get('end_time'))
+    with open('test1.csv', 'w', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',')
+        csvwriter.writerow(['id', 'reg_no', 'name', 'entry_time', 'exit_time'])
+        for rec in Record.query.filter(Record.entry_time>start_time, Record.entry_time<end_time).all():
+            csvwriter.writerow([rec.id, rec.reg_no, rec.name, rec.entry_time, rec.exit_time])
+
+    return send_file('../test1.csv',
+                     mimetype='text/csv',
+                     as_attachment=True,
+                     download_name='filteredLogs.csv')
+
+@main.route('/show_recs')
+def show_recs():
+    current_time = datetime.now()
+    return render_template('logs.html', current_time=current_time)

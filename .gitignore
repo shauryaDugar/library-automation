@@ -52,7 +52,7 @@ Thumbs.db
 # Data Files
 barcodes.csv
 data.csv
-test.csv
+test*.csv
 
 # DB Instance Folder
 /instance
