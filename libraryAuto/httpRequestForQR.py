@@ -5,18 +5,9 @@ import datetime
 import argparse
 from utils import get_info
 
-# construct the argument parser and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-o", "--output", type=str, default="libraryAuto/Logs/barcodes.csv",
-	help="path to output CSV file containing barcodes")
-args = vars(ap.parse_args())
-
-
 # Initialize the camera
 print("[INFO] starting video stream...")
 camera = cv2.VideoCapture(0)
-
-logs = open(args["output"], "w")
 
 # Set the resolution of the camera
 camera.set(3, 640)
@@ -73,17 +64,12 @@ while True:
             requests.get(mail_url)
             # Print a confirmation message
             print(f"Person {data} entered the room at {logtime}. {num_people} people in the room.")
-            
-            logs.write("{},{},Entry\n".format(data, logtime))
-            logs.flush()
         else:
             # if the person is in the room, consider an exit after 2 minutes
             time = datetime.datetime.now()
             logtime = time.strftime("%H:%M:%S %d-%m-%Y")
             if(time - people_in_room[data]).seconds > 10:
                 last_exit[data] = time
-                logs.write("{},{},Exit\n".format(data, logtime))
-                logs.flush()
                 del people_in_room[data]
                 num_people = len(people_in_room)
                 dburl = f"http://localhost:8000/update_exit_time?reg_no={data}&time={logtime}"
