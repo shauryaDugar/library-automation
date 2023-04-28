@@ -11,7 +11,7 @@ main = Blueprint('main', __name__)
 @main.route('/')
 def index():
     recs = Record.query.filter_by(exit_time=None).all()
-    return f"<h1>{len(recs)} people in the library</h1>"
+    return render_template('home.html', count=len(recs))
 
 
 @main.route('/send_entry_mail', methods=["GET"])

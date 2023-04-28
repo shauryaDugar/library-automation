@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h1>There are {{ count }} people in the library.</h1>
+    <div>
+        <button>
+            <a href="{{url_for('main.show_people_inside')}}">Show people in the library</a>
+        </button>
+        <button>
+            <a href="{{url_for('main.show_recs')}}">Download logs in custom time</a>
+        </button>
+        <button>
+            <a href="{{url_for('main.download_records')}}">Download today's entries</a>
+        </button>
+    </div>
+</body>
+</html>
