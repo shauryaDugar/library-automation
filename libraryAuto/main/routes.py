@@ -1,9 +1,10 @@
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint, send_file
 from libraryAuto.utils import get_info
 from libraryAuto.mailUtil import send_library_exit_mail, send_library_entry_mail   
 from libraryAuto import db
 from libraryAuto.models import Record
 from datetime import datetime
+import csv
 
 count = 0
 
@@ -54,7 +55,6 @@ def add_record():
     db.session.commit()
     return f"Record added successfully"
 
-
 @main.route('/update_exit_time')
 def update_exit_time():
     reg_no = request.args.get('reg_no', type=int)
@@ -69,4 +69,17 @@ def update_exit_time():
 @main.route('/show_people_inside')
 def show_people_inside():
     records = Record.query.filter_by(exit_time=None).all()
-    return jsonify({"people_inside": [rec.name for rec in records]})
+    return jsonify({"people_inside": [(rec.name, rec.reg_no, rec.entry_time) for rec in records]})
+
+@main.route('/download_records')
+def download_records():
+    with open('test.csv', 'w', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',')
+        csvwriter.writerow(['id', 'reg_no', 'name', 'entry_time', 'exit_time'])
+        for rec in Record.query.all():
+            csvwriter.writerow([rec.id, rec.reg_no, rec.name, rec.entry_time, rec.exit_time])
+
+    return send_file('../test.csv',
+                     mimetype='text/csv',
+                     as_attachment=True,
+                     download_name='logs.csv')
