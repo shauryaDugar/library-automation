@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Logs</title>
-</head>
-<body>
+{% extends "layout.html" %}
+{% block content %}
+
     <form method="GET" action="/display_records">
         <label for="start-time">Start Time:</label>
         <input type="datetime-local" id="start-time" name="start_time" required>
@@ -13,5 +10,5 @@
       
         <button type="submit">Download</button>
       </form>
-</body>
-    </html>
+
+{% endblock content %}

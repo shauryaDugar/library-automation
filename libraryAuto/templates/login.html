@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Login Form</title>
-  </head>
-  <body>
+{% extends 'layout.html' %}
+{% block content %}
+
     <h1>Admin Login Form</h1>
     <form method="POST" action="">
       <label for="username">Username:</label>
@@ -14,5 +11,5 @@
       <br>
       <input type="submit" value="Login">
     </form>
-  </body>
-</html>
+
+{% endblock content %}

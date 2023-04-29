@@ -13,7 +13,7 @@ main = Blueprint('main', __name__)
 @main.route('/')
 def index():
     recs = Record.query.filter_by(exit_time=None).all()
-    return render_template('home.html', count=len(recs))
+    return render_template('home.html', count=len(recs), title="Home")
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
@@ -30,7 +30,7 @@ def login():
 
         return 'Invalid username or password'
 
-    return render_template('login.html')
+    return render_template('login.html', title="Login")
 
 @main.route('/logout')
 @login_required
@@ -122,4 +122,4 @@ def display_records():
 @login_required
 def show_recs():
     current_time = datetime.now()
-    return render_template('logs.html', current_time=current_time)
+    return render_template('logs.html', current_time=current_time, title="Logs")
