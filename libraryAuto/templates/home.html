@@ -4,6 +4,9 @@
     <title>Home</title>
 </head>
 <body>
+    {% if current_user.is_authenticated %}
+        <h1>Admin Panel</h1>
+    {% endif %}
     <h1>There are {{ count }} people in the library.</h1>
     <div>
         <button>
@@ -15,6 +18,11 @@
         <button>
             <a href="{{url_for('main.download_records')}}">Download today's entries</a>
         </button>
+        {% if current_user.is_authenticated %}
+            <button>
+                <a href="{{url_for('main.logout')}}">Logout</a>
+            </button>
+        {% endif %}
     </div>
 </body>
 </html>

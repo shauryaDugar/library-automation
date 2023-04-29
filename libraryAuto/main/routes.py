@@ -1,10 +1,12 @@
-from flask import request, jsonify, Blueprint, send_file, render_template
+from flask import request, jsonify, Blueprint, send_file, render_template, redirect, url_for
 from libraryAuto.utils import get_info
 from libraryAuto.mailUtil import send_library_exit_mail, send_library_entry_mail   
 from libraryAuto import db
 from libraryAuto.models import Record
 from datetime import datetime
 import csv
+from flask_login import login_user, login_required, current_user, logout_user
+from libraryAuto.user import admins
 
 main = Blueprint('main', __name__)
 
@@ -13,6 +15,28 @@ def index():
     recs = Record.query.filter_by(exit_time=None).all()
     return render_template('home.html', count=len(recs))
 
+@main.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        for admin in admins:
+            if admin.name == username and admin.password == password:
+                login_user(admin, force=True)
+                next_page = request.args.get('next')
+                print(next_page)
+                return redirect(next_page) if next_page else redirect(url_for('main.index'))
+
+        return 'Invalid username or password'
+
+    return render_template('login.html')
+
+@main.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('main.index'))
 
 @main.route('/send_entry_mail', methods=["GET"])
 def send_entry_mail():
@@ -60,11 +84,13 @@ def update_exit_time():
     return f"Exit time updated successfully"
 
 @main.route('/show_people_inside')
+@login_required
 def show_people_inside():
     records = Record.query.filter_by(exit_time=None).all()
     return jsonify({"people_inside": [(rec.name, rec.reg_no, rec.entry_time) for rec in records]})
 
 @main.route('/download_records')
+@login_required
 def download_records():
     with open('test.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile, delimiter=',')
@@ -93,6 +119,7 @@ def display_records():
                      download_name='filteredLogs.csv')
 
 @main.route('/show_recs')
+@login_required
 def show_recs():
     current_time = datetime.now()
     return render_template('logs.html', current_time=current_time)
