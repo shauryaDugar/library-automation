@@ -1,28 +1,30 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Entry/Exit Time Analytics</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  </head>
-  <body>
+{% extends 'layout.html' %}
+{% block content %}
+	
     <h1>Entry/Exit Time Analytics</h1>
     <canvas id="chart"></canvas>
     <h2>Summary Statistics</h2>
     <ul>
-      <li>Total Entries: {{ data|length }}</li>
-      <li>Total Unique Visitors: {{ data|unique('person_id')|length }}</li>
+      <li>Total Entries: {{ num_entries }}</li>
+      <li>Total Unique Visitors: {{ num_visitors }}</li>
       <li>Average Time Spent: {{ avg_time|round(2) }} minutes</li>
     </ul>
     <script>
-      var data = {{ data|tojson }};
-      var entryData = data.map(function(d) { return { x: d.entry_time, y: 1 } });
-      var exitData = data.map(function(d) { return { x: d.exit_time, y: -1 } });
-      var chartData = entryData.concat(exitData).sort(function(a, b) { return a.x - b.x });
+      var entryTimes = {{ entry_times|tojson }};
+      var exitTimes = {{ exit_times|tojson }};
+      var data = [];
+      for (var i = 0; i < entryTimes.length; i++) {
+        data.push({ x: entryTimes[i], y: 1 });
+      }
+      for (var i = 0; i < exitTimes.length; i++) {
+        data.push({ x: exitTimes[i], y: -1 });
+      }
+      data.sort(function(a, b) { return a.x - b.x; });
       var chart = new Chart('chart', {
         type: 'line',
         data: {
           datasets: [{
-            data: chartData,
+            data: data,
             lineTension: 0,
             borderColor: 'blue',
             borderWidth: 2,
@@ -35,35 +37,36 @@
             xAxes: [{
               type: 'time',
               time: {
-                unit: 'hour',
+                unit: 'minute',
                 displayFormats: {
-                  hour: 'hA'
+                  minute: 'h:mm a'
                 }
-              },
-              scaleLabel: {
-                display: true,
-                labelString: 'Time'
               }
             }],
             yAxes: [{
               ticks: {
-                min: 0,
-                stepSize: 1
-              },
-              scaleLabel: {
-                display: true,
-                labelString: 'Number of People'
+                suggestedMin: 0,
+                suggestedMax: 2,
+                callback: function(value, index, values) {
+                  return value == 1 ? 'In' : 'Out';
+                }
               }
             }]
           },
           legend: {
             display: false
           },
-          title: {
-            display: false
+          tooltips: {
+            callbacks: {
+              label: function(tooltipItem, data) {
+                var label = tooltipItem.xLabel.toLocaleString();
+                label += tooltipItem.yLabel == 1 ? ': Entry' : ': Exit';
+                return label;
+              }
+            }
           }
         }
       });
     </script>
-  </body>
-</html>
+
+{% endblock content %}

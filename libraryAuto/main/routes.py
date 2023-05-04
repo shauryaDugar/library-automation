@@ -17,16 +17,20 @@ def index():
     vis_month = Record.query.filter(Record.entry_time>datetime.combine(datetime.today().replace(day=1), datetime.min.time())).all()
     return render_template('home.html', count=len(recs), today=len(today), vis_month=len(vis_month), title="Home")
 
-# @main.route('/dashboard')
-# def dashboard():
-#     data = []
-#     recs = Record.query.all()
-#     for rec in recs:
-#         data.append({
-#                 'entry_time': rec.entry_time,
-#                 'exit_time': rec.exit_time
-#             })
-#     return render_template('dashboard.html', data=data, title="Dashboard")
+@main.route('/dashboard')
+@login_required
+def dashboard():
+    data = Record.query.filter(Record.exit_time !=  None).all()
+    entry_times = [record.entry_time for record in data]
+    exit_times = [record.exit_time for record in data]
+    visitors = list(set([record.reg_no for record in data]))
+    num_entries = len(data)
+    num_visitors = len(visitors)
+    total_time = sum([(record.exit_time - record.entry_time).total_seconds() / 60 for record in data])
+    avg_time = total_time / num_entries if num_entries > 0 else 0
+    return render_template('dashboard.html', entry_times=entry_times, 
+                           exit_times=exit_times, num_entries=num_entries, 
+                           num_visitors=num_visitors, avg_time=avg_time, title="Dashboard")
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
