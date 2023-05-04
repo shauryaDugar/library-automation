@@ -2,24 +2,105 @@
 {% block content %}
 
     {% if current_user.is_authenticated %}
-        <h1>Admin Panel</h1>
+        <h1 class="text-center">Admin Panel</h1>
     {% endif %}
-    <h1>There are {{ count }} people in the library.</h1>
-    <div>
-        <button>
-            <a href="{{url_for('main.show_people_inside')}}">Show people in the library</a>
-        </button>
-        <button>
-            <a href="{{url_for('main.show_recs')}}">Download logs in custom time</a>
-        </button>
-        <button>
-            <a href="{{url_for('main.download_records')}}">Download today's entries</a>
-        </button>
-        {% if current_user.is_authenticated %}
-            <button>
-                <a href="{{url_for('main.logout')}}">Logout</a>
-            </button>
-        {% endif %}
-    </div>
-    
+    <div class="container mt-4">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Total Visitors Today</h5>
+						<p class="card-text">{{ today }}</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Currently in Library</h5>
+						<p class="card-text">{{ count }}</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Total Visitors This Month</h5>
+						<p class="card-text">{{vis_month }}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+
+
+	<div class="container mt-4">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+	
+						<h5 class="card-text">Show people in the library.</h5>
+						<a href="{{url_for('main.show_people_inside')}}" class="btn btn-primary">View List</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+	
+						<h5 class="card-text">Download logs in custom time</h5>
+						<!-- Pop up window appear here -->
+						<button onclick="openPopup()" class="btn btn-primary">Click here</button>
+							<div id="popup" class="popup">
+								<div class="popup-content">
+									<div class="container mt-4">
+										<h1>Generate Reports</h1>
+										<form>
+											<div class="form-group">
+												<label for="startDate">Start Date:</label>
+												<input type="date" class="form-control" id="startDate" name="startDate">
+											</div>
+											<div class="form-group">
+												<label for="endDate">End Date:</label>
+												<input type="date" class="form-control" id="endDate" name="endDate">
+											</div>
+												
+											<button type="submit" class="btn btn-primary">Download </button>
+										</form>
+									</div>
+									<!-- Content goes here -->
+									<button class="close-btn btn btn-primary" onclick="closePopup()">Close</button>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+	
+						<h5 class="card-text">Download today's entries</h5>
+						<a href="{{url_for('main.download_records')}}" class="btn btn-primary">Download</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	
+		<script>
+		// Function to open pop-up window
+		function openPopup() {
+			document.getElementById("popup").style.display = "block";
+		}
+
+		// Function to close pop-up window
+		function closePopup() {
+			document.getElementById("popup").style.display = "none";
+		}
+	</script>
+		
 {% endblock content %}

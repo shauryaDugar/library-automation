@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+{% block content %}
+	
+	<div class="container">
+		<h2>People inside the library</h2>
+		
+		<table class="table">
+		  <thead>
+			<tr>
+			  <th>S. No.</th>
+			  <th>Registration No.</th>
+			  <th>Name</th>
+			  <th>Entry Time</th>
+			</tr>
+		  </thead>
+		  <tbody>
+			{% set count = 1 %}
+			{% for rec in records %}
+				<tr>
+				<td>{{ count }}</td>
+				<td>{{ rec.reg_no }}</td>
+				<td> {{ rec.name }}</td>
+				<td> {{ rec.entry_time }}</td>
+				</tr>
+				{% set count = count + 1 %}
+			{% endfor %}	
+		  </tbody>
+		</table>
+	  </div>
+	  
+{% endblock content %}

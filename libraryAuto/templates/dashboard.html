@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Entry/Exit Time Analytics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <h1>Entry/Exit Time Analytics</h1>
+    <canvas id="chart"></canvas>
+    <h2>Summary Statistics</h2>
+    <ul>
+      <li>Total Entries: {{ data|length }}</li>
+      <li>Total Unique Visitors: {{ data|unique('person_id')|length }}</li>
+      <li>Average Time Spent: {{ avg_time|round(2) }} minutes</li>
+    </ul>
+    <script>
+      var data = {{ data|tojson }};
+      var entryData = data.map(function(d) { return { x: d.entry_time, y: 1 } });
+      var exitData = data.map(function(d) { return { x: d.exit_time, y: -1 } });
+      var chartData = entryData.concat(exitData).sort(function(a, b) { return a.x - b.x });
+      var chart = new Chart('chart', {
+        type: 'line',
+        data: {
+          datasets: [{
+            data: chartData,
+            lineTension: 0,
+            borderColor: 'blue',
+            borderWidth: 2,
+            pointRadius: 0,
+            fill: false
+          }]
+        },
+        options: {
+          scales: {
+            xAxes: [{
+              type: 'time',
+              time: {
+                unit: 'hour',
+                displayFormats: {
+                  hour: 'hA'
+                }
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Time'
+              }
+            }],
+            yAxes: [{
+              ticks: {
+                min: 0,
+                stepSize: 1
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Number of People'
+              }
+            }]
+          },
+          legend: {
+            display: false
+          },
+          title: {
+            display: false
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

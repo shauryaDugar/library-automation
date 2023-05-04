@@ -13,7 +13,20 @@ main = Blueprint('main', __name__)
 @main.route('/')
 def index():
     recs = Record.query.filter_by(exit_time=None).all()
-    return render_template('home.html', count=len(recs), title="Home")
+    today = Record.query.filter(Record.entry_time>datetime.combine(datetime.today(), datetime.min.time())).all()
+    vis_month = Record.query.filter(Record.entry_time>datetime.combine(datetime.today().replace(day=1), datetime.min.time())).all()
+    return render_template('home.html', count=len(recs), today=len(today), vis_month=len(vis_month), title="Home")
+
+# @main.route('/dashboard')
+# def dashboard():
+#     data = []
+#     recs = Record.query.all()
+#     for rec in recs:
+#         data.append({
+#                 'entry_time': rec.entry_time,
+#                 'exit_time': rec.exit_time
+#             })
+#     return render_template('dashboard.html', data=data, title="Dashboard")
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
@@ -87,7 +100,7 @@ def update_exit_time():
 @login_required
 def show_people_inside():
     records = Record.query.filter_by(exit_time=None).all()
-    return jsonify({"people_inside": [(rec.name, rec.reg_no, rec.entry_time) for rec in records]})
+    return render_template('history.html', records=records, title="People Inside")
 
 @main.route('/download_records')
 @login_required

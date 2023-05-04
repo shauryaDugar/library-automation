@@ -1,14 +1,45 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>{{ title }}</title>
-    </head>
-    <body>
-        <div>
-            <button>
-                <a href="{{ url_for('main.index') }}">Home</a>
-            </button>
-        </div>
+<head>
+	<title>{{ title }} </title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+	
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<a class="navbar-brand" href="#">Library Entry System</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+		  <ul class="navbar-nav">
+			<li class="nav-item">
+			  <a class="nav-link" href="{{url_for('main.index')}}">Dashboard</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="{{url_for('main.index')}}">Home</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="{{url_for('main.show_people_inside')}}">People Inside</a>
+			</li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{url_for('main.download_records')}}">Download Today's Logs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{url_for('main.show_recs')}}">Download Custom Logs</a>
+            </li>
+            {% if current_user.is_authenticated %}
+                <li class="nav-item">
+                <a class="nav-link" href="{{url_for('main.logout')}}">Logout</a>
+                </li>
+            {% endif %}
+		  </ul>
+		</div>
+	  </nav>
         {% block content %}{% endblock content %}
     </body>
 </html> 

@@ -56,3 +56,5 @@ test*.csv
 
 # DB Instance Folder
 /instance
+
+.vscode/
