@@ -10,7 +10,7 @@ __pycache__/
 # Environment files
 .env
 .env.*
-README.md
+
 
 # Development files
 *.log
