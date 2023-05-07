@@ -1,15 +1,17 @@
 {% extends 'layout.html' %}
 {% block content %}
  
-    <h1>Admin Login Form</h1>
-    <form method="POST" action="">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required>
-      <br>
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
-      <br>
-      <input type="submit" value="Login">
-    </form>
+    <h1 class="text-center">Admin Login Form</h1>
+    <div class="d-flex align-items-center justify-content-center">
+      <form method="POST" action="">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <input type="submit" value="Login">
+      </form>
+    </div>
 
 {% endblock content %}
