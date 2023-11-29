@@ -65,7 +65,7 @@ while True:
             # Print a confirmation message
             print(f"Person {data} entered the room at {logtime}. {num_people} people in the room.")
         else:
-            # if the person is in the room, consider an exit after 2 minutes
+            # if the person is in the room, consider an exit after 10 sec
             time = datetime.datetime.now()
             logtime = time.strftime("%H:%M:%S %d-%m-%Y")
             if(time - people_in_room[data]).seconds > 10:

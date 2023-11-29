@@ -13,7 +13,7 @@ class Admin(User):
         super().__init__(id, name, password)
     
 
-admins = [Admin(1, 'admin', os.environ.get('ADMIN_PASSWORD'))]
+admins = [Admin(1, 'admin', os.environ.get('ADMIN_PASSWORD')), Admin(2, 'admin2', os.environ.get('ADMIN_PASSWORD'))]
 
 @login_manager.user_loader
 def load_user(user_id):

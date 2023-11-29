@@ -3,7 +3,7 @@ from libraryAuto.utils import get_info
 from libraryAuto.mailUtil import send_library_exit_mail, send_library_entry_mail   
 from libraryAuto import db
 from libraryAuto.models import Record
-from datetime import datetime
+from datetime import datetime, timedelta
 import csv
 from flask_login import login_user, login_required, current_user, logout_user
 from libraryAuto.user import admins
@@ -31,6 +31,33 @@ def dashboard():
     return render_template('dashboard.html', entry_times=entry_times, 
                            exit_times=exit_times, num_entries=num_entries, 
                            num_visitors=num_visitors, avg_time=avg_time, title="Dashboard")
+
+
+@main.route('/hourly_entries_data')
+def hourly_entries_data():
+    # Get date parameter from request
+    date_str = request.args.get('date')
+
+    # Convert date string to datetime object
+    date = datetime.strptime(date_str, '%Y-%m-%d').date()
+
+    records = Record.query.filter(Record.entry_time >= date, Record.entry_time < date + timedelta(days=1)).all()
+
+    # Initialize hourly entries data
+    hourly_entries = {hour: 0 for hour in range(24)}
+
+    # Iterate through records and count hourly entries
+    for record in records:
+        entry_hour = record.entry_time.hour
+        hourly_entries[entry_hour] += 1
+
+    # Return hourly entries data as JSON
+    return jsonify(hourly_entries)
+
+@main.route('/analytics')
+def analytics():
+    return render_template('analytics.html', title="Analytics")
+
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
